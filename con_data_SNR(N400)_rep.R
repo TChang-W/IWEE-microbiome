@@ -4,7 +4,7 @@ sigmoid = function(x) {
   1 / (1 + exp(-x))
 }
 
-# true Beta for binary X
+# true Beta for X
 set.seed(3)
 nTaxa = 400
 N = 100
@@ -19,11 +19,11 @@ Ci_max_lst = 1/c(seq(100, 1000, by = 100), seq(2000, 10000, by = 1000))
 Ci_min_lst = 1/c(seq(100, 1000, by = 100), seq(2000, 10000, by = 1000))
 Ci_scale = 100
 
-para = 100
-b_setting = 8
+para = 60
+b_setting = 10
 
-i = 5
-j = 14
+i = 1
+j = 19
 eta = 0.1
 
 Ci_min = Ci_min_lst[j]
@@ -54,14 +54,13 @@ randeff_var = 0.5
 ################################################################################
 # truBeta[3, ] = runif(nTaxa, min = -3, max = 3)
 # truBeta[4, ] = runif(nTaxa, min = -3, max = 3)
-truBeta[3, ] = runif(nTaxa, min = -1e-6, max = 1e-6)
-truBeta[4, ] = runif(nTaxa, min = -1e-6, max = 1e-6)
+truBeta[3, ] = 0
+truBeta[4, ] = 0
 
 rownames(truBeta) = c("intercept", "X1", "W1", "W2")
 colnames(truBeta) = paste0("taxon", seq_len(nTaxa))
 write.table(truBeta, file = "./simTrueBetaMat_con.csv", sep = ",")
 
-set.seed(randseed)
 if (nTaxa > ncol(truBeta)) stop(sprintf("The number of taxa cannot be greater than %d.", ncol(truBeta)))
 coefMat <- truBeta[,1:(nTaxa)]
 
@@ -70,20 +69,20 @@ n_omega <- nrow(truBeta)-1 # omega1, omega2, omega3
 Sigma <- outer(1:n_omega, 1:n_omega, function(i, j) rho^abs(i - j))
 
 # remove W1, W2
-truBeta = truBeta[1:2, ]
-coefMat = coefMat[1:2, ]
+# truBeta = truBeta[1:2, ]
+# coefMat = coefMat[1:2, ]
 
 
-for (i in 1:10) {
+for (i in 1:50) {
   
   omega.mat <- mvrnorm(N, mu = rep(0, n_omega), Sigma = Sigma)
   CovData <- cbind(runif(N, min = -0.5, max = 1), as.numeric(omega.mat[,2]>0), omega.mat[,3])
-  CovData = CovData[, 1, drop = FALSE]
+  # CovData = CovData[, 1, drop = FALSE]
   CovDataWithIntcp <- cbind(1, CovData)
   
   CovData <- cbind(c(1:N), CovData)
-  # colnames(CovData) <- c("id", "X1", paste0("W", 1:2))
-  colnames(CovData) <- c("id", "X1")
+  colnames(CovData) <- c("id", "X1", paste0("W", 1:2))
+  # colnames(CovData) <- c("id", "X1")
   
   
   # generate the true \mathcal{Yi} (in gut) from log-normal distribution
@@ -177,11 +176,11 @@ for (i in 1:10) {
 
   tail(results, -6)
   
-  # floor zero filename
-  filename = sprintf("./con_X/paras/diffzero/nTaxa%d_floor%d/paras_nTaxa%d_%d_%s_%.2f_%.2f_%d.rds", nTaxa, para, nTaxa, randseed, "con_X", b_setting, floorZeroPerc, i)
+  # # floor zero filename
+  # filename = sprintf("./con_X/paras/diffzero/nTaxa%d_floor%d/paras_nTaxa%d_%d_%s_%.2f_%.2f_%d.rds", nTaxa, para, nTaxa, randseed, "con_X", b_setting, para, i)
   
   # # sparsity filename
-  # filename = sprintf("./con_X/paras/diffspars/nTaxa%d_spars%d/paras_nTaxa%d_%d_%s_%.2f_%.2f_%d.rds", nTaxa, para, nTaxa, randseed, "con_X", b_setting, totalZeroPerc, i)
+  # filename = sprintf("./con_X/paras/diffspars/nTaxa%d_spars%d/paras_nTaxa%d_%d_%s_%.2f_%.2f_%d.rds", nTaxa, para, nTaxa, randseed, "con_X", b_setting, para, i)
   
   
   saveRDS(results, file = filename)

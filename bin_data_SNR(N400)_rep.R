@@ -1,8 +1,9 @@
 library(MASS)
 # true Beta for binary X
-set.seed(3)
+
 true_zero_sparsity = 0.2
 
+set.seed(3)
 nTaxa = 400
 N = 100
 truBeta = matrix(0, 4, nTaxa)
@@ -12,10 +13,10 @@ truBeta[1, ] = runif(nTaxa, min = 10, max = 10)
 
 Ci_mat = matrix(rep(1/(1:100)/20, each = 2), nrow=2)
 
-para = 100
-Ci_setting = 1
+para = 15
+Ci_setting = 5
 Ci_rate = 1.3
-eta = 0.03
+eta = 0.1
 
 u = runif(nTaxa)
 # # SNR = 1.05
@@ -50,7 +51,7 @@ rownames(truBeta) = c("intercept", "X1", "W1", "W2")
 colnames(truBeta) = paste0("taxon", seq_len(nTaxa))
 write.table(truBeta, file = "./simTrueBetaMat_bin.csv", sep = ",")
 
-set.seed(randseed)
+
 if (nTaxa > ncol(truBeta)) stop(sprintf("The number of taxa cannot be greater than %d.", ncol(truBeta)))
 coefMat <- truBeta[,1:(nTaxa)]
 
@@ -62,7 +63,7 @@ Sigma <- outer(1:n_omega, 1:n_omega, function(i, j) rho^abs(i - j))
 # truBeta = truBeta[1:2, ]
 # coefMat = coefMat[1:2, ]
 
-for (i in 1:10) {
+for (i in 1:50) {
   omega.mat <- mvrnorm(N, mu = rep(0, n_omega), Sigma = Sigma)
   CovData <- cbind(as.numeric(omega.mat[,1]>0), as.numeric(omega.mat[,2]>0), omega.mat[,3])
   # CovData = CovData[, 1, drop = FALSE]
@@ -161,10 +162,10 @@ for (i in 1:10) {
                   totalZeroPerc = trueZeroPerc + falseZeroPerc,
                   SNR = round(SNR, 2))
   # floor zero filename
-  filename = sprintf("./bin_X/paras/diffzero/nTaxa%d_floor%d/paras_nTaxa%d_%d_%s_%.2f_%.2f_%d.rds", nTaxa, para, nTaxa, randseed, "binary_X", SNR, floorZeroPerc, i)
+  filename = sprintf("./bin_X/paras/diffzero/nTaxa%d_floor%d/paras_nTaxa%d_%d_%s_%.2f_%.2f_%d.rds", nTaxa, para, nTaxa, randseed, "binary_X", SNR, para, i)
 
   # # sparsity filename
-  # filename = sprintf("./bin_X/paras/diffspars/nTaxa%d_spars%d/paras_nTaxa%d_%d_%s_%.2f_%.2f_%d.rds", nTaxa, para, nTaxa, randseed, "binary_X", SNR, totalZeroPerc, i)
+  # filename = sprintf("./bin_X/paras/diffspars/nTaxa%d_spars%d/paras_nTaxa%d_%d_%s_%.2f_%.2f_%d.rds", nTaxa, para, nTaxa, randseed, "binary_X", SNR, para, i)
   
   # # ci rate filename
   # filename = sprintf("./bin_X/paras/diffcirate/nTaxa%d_cirate%.1f/paras_nTaxa%d_%d_%s_%.2f_%.2f_%d.rds", nTaxa, Ci_rate, nTaxa, randseed, "binary_X", SNR, Ci_rate, i)
