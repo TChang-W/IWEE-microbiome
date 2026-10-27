@@ -1,0 +1,43 @@
+Package: IWEE
+Type: Package
+Title: Inverse-Weighted Estimating Equations for Zero-Inflated Microbiome Data
+Version: 0.1.0
+Authors@R: 
+    c(
+    person(given = "Tingchang",
+           family = "Wang",
+           role = "aut",
+           email = "twang5@ufl.edu"),
+    person(given = "Zhigang",
+           family = "Li",
+           role = c("aut", "cre"),
+           email = "zhigang.li@ufl.edu")
+    )
+Description: Implements an inverse-weighted estimating equation (IWEE)
+    approach for identifying microbial taxa associated with covariates of
+    interest in zero-inflated, compositional microbiome data. Zeros are
+    modeled as a mixture of biological zeros and zeros induced by the
+    sampling mechanism. The package selects the zero-mechanism parameter by
+    cross-validation, screens reference taxa with a LASSO, estimates
+    coefficients with weighted least squares (optionally via QR
+    decomposition), and obtains jackknife bias-corrected estimates, variances,
+    p-values and false discovery rate adjusted significance calls. Group-wise
+    computations are run in parallel.
+License: GPL (>= 3)
+Encoding: UTF-8
+Depends: 
+    R (>= 4.0.0)
+Imports: 
+    doParallel,
+    foreach,
+    glmnet,
+    MASS,
+    Matrix,
+    parallel,
+    stats,
+    utils
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.1
