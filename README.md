@@ -13,6 +13,13 @@ install.packages("IWEE", repos = NULL, type = "source")
 # or: R CMD INSTALL IWEE
 ```
 
+Alternatively, install directly from GitHub:
+
+```r
+install.packages("remotes")
+remotes::install_github("TChang-W/IWEE-microbiome")
+```
+
 The parallel stages start PSOCK workers that load the *installed* package, so
 install it (do not only `devtools::load_all()`) before calling `IWEE()`.
 
